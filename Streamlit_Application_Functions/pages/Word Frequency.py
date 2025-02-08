@@ -28,22 +28,28 @@ def clean_and_analyze_text(data, text_columns):
     # Combine all text from the selected columns
     combined_words = ' '.join(data[text_columns].astype(str).fillna('').values.flatten())
 
-    # Remove <reference_list> and <in_text_reference> along with their content
-    cleaned_content = re.sub(r'<reference_list>[\s\S]*?</reference_list>', '', combined_words, flags=re.DOTALL)
-    cleaned_content = re.sub(r'<in_text_reference>[\s\S]*?</in_text_reference>', '', cleaned_content, flags=re.DOTALL)
+    # Debugging: Check raw content
+    print("Raw Text Before Cleaning:", combined_words[:1000])  
 
-    # Keep the correct word from <original=...> tags
+    # Remove <reference_list> and <in_text_reference> along with their content
+    cleaned_content = re.sub(r'<reference_list\b[^>]*>.*?</reference_list>', '', combined_words, flags=re.DOTALL | re.IGNORECASE)
+    cleaned_content = re.sub(r'<in_text_reference\b[^>]*>.*?</in_text_reference>', '', cleaned_content, flags=re.DOTALL | re.IGNORECASE)
+
+    # Ensure <original=...> keeps only the correct word
     cleaned_content = re.sub(r'<original=[^>]*?>(.*?)</original>', r'\1', cleaned_content)
 
-    # Ensure <title> content is kept
+    # Extract and keep <title> content
     title_content = re.findall(r'<title>(.*?)</title>', cleaned_content, re.DOTALL)
     if title_content:
         cleaned_content += ' ' + ' '.join(title_content)  # Append titles to the text
 
+    # Debugging: Check after reference removal
+    print("Text After Removing References:", cleaned_content[:1000])  
+
     # Convert text to lowercase for uniformity
     cleaned_content = cleaned_content.lower()
 
-    # Tokenize words (excluding XML tags)
+    # Tokenize words
     words = re.findall(r"\b\w+(?:[-']\w+)*\b", cleaned_content)
 
     # Remove unnecessary words (e.g., extracted tags)
