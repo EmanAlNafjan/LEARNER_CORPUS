@@ -36,9 +36,9 @@ def clean_and_analyze_text(data, text_columns):
 
     cleaned_content = re.sub(r'<references?_list>[\s\S]*?</references?_list>', '', combined_words, flags=re.DOTALL)
     cleaned_content = re.sub(r'<in_text_reference>[\s\S]*?</in_text_reference>', '', cleaned_content, flags=re.DOTALL)
-    corrected_text = re.sub(r"<original='.*?'>(.*?)</original>", r'\1', cleaned_content)
+    cleaned_content = re.sub(r'<original=[^>]>(.?)</original>', r'\1', cleaned_content)
 
-    cleaned_content_new = corrected_text.lower()
+    cleaned_content_new = cleaned_content.lower()
 
     words = re.findall(r"\b\w+(?:[-']\w+)*\b", cleaned_content_new)
     words = [word for word in words if word not in ['reference_list', 'references_list']]
