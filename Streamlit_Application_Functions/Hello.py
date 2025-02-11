@@ -23,7 +23,7 @@ st.markdown("# KSAUHS Learner Corpus 📝")
 
 st.markdown(
 """
-## The KSAUHS Learner Corpus is a longitudinal corpus made of EFL health sciences students writing assignments and exams sin Saudi.""")
+## The KSAUHS Learner Corpus is a longitudinal corpus made of EFL health sciences students writing assignments and exams in Saudi.""")
 st.markdown(
 """
 👈 Select how you would like to search the corpus from the sidebar
