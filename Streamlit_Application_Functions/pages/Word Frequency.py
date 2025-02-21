@@ -26,7 +26,7 @@ def clean_and_analyze_text(data, text_columns):
     """
 
     # Combine all text from the selected columns
-    combined_words = ' '.join(data[text_columns].astype(str).fillna('').values.flatten())
+    combined_words = ' '.join(data[text_columns].astype(str).fillna('').replace('nan', '').apply(lambda x: ' '.join(x), axis = 1))
 
     # **PREPROCESSING STEP: Remove non-breaking spaces and zero-width spaces**
     combined_words = combined_words.replace('\xa0', ' ')  # Remove non-breaking spaces
