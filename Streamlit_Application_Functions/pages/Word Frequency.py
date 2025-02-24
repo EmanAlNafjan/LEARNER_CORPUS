@@ -36,8 +36,8 @@ def clean_and_analyze_text(data, text_columns):
     print("Preprocessed Text Before Regex:", combined_words[:1000])
 
     # Remove <reference_list> and <in_text_reference> along with their content
-    cleaned_content = re.sub(r'<reference_list\b[^>]*>[\s\S]*?</reference_list>', '', combined_words, flags=re.DOTALL | re.IGNORECASE)
-    cleaned_content = re.sub(r'<in_text_reference\b[^>]*>[\s\S]*?</in_text_reference>', '', cleaned_content, flags=re.DOTALL | re.IGNORECASE)
+    cleaned_content = re.sub(r'<reference_list\b[^>]*?>[\s\S]*?</reference_list>', '', combined_words, flags=re.DOTALL | re.IGNORECASE)
+    cleaned_content = re.sub(r'<in_text_reference\b[^>]*?>[\s\S]*?</in_text_reference>', '', cleaned_content, flags=re.DOTALL | re.IGNORECASE)
 
     # Ensure <original=...> keeps only the correct word
     cleaned_content = re.sub(r'<original=[^>]*?>(.*?)</original>', r'\1', cleaned_content)
