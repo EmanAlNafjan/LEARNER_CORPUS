@@ -16,6 +16,7 @@ def clean_and_analyze_text(data, text_columns):
     - Removes incorrectly spelled words from <original=...> and keeps the correct version.
     - Removes <reference_list> and <in_text_reference> along with their content.
     - Retains the content inside <title>...</title>.
+    - Ensures proper spacing around tags to prevent word concatenation.
 
     Parameters:
     data (pd.DataFrame): DataFrame containing text data.
@@ -35,26 +36,63 @@ def clean_and_analyze_text(data, text_columns):
     # Debugging: Print first 1000 characters to check for hidden characters
     print("Preprocessed Text Before Regex:", combined_words[:1000])
 
+    # Step 1: Ensure there are spaces around XML tags to prevent word concatenation
+    # This adds a space before and after any XML tag
+    combined_words = re.sub(r'(<[^>]*?>)', r' \1 ', combined_words)
+
+    # Step 2: Ensure there's space around punctuation that might join words
+    combined_words = re.sub(r'(\w+)([.,;:!?()\[\]{}])(\w+)', r'\1 \2 \3', combined_words)
+
+    # Step 3: Clean up multiple spaces that might have been introduced
+    combined_words = re.sub(r'\s+', ' ', combined_words).strip()
+
     # Remove <reference_list> and <in_text_reference> along with their content
-    cleaned_content = re.sub(r'<reference_list\b[^>]*?>[\s\S]*?</reference_list>', '', combined_words, flags=re.DOTALL | re.IGNORECASE)
-    cleaned_content = re.sub(r'<in_text_reference\b[^>]*?>[\s\S]*?</in_text_reference>', '', cleaned_content, flags=re.DOTALL | re.IGNORECASE)
+    cleaned_content = re.sub(r'<reference_list\b[^>]*?>[\s\S]*?</reference_list>', ' ', combined_words, flags=re.DOTALL | re.IGNORECASE)
+    cleaned_content = re.sub(r'<in_text_reference\b[^>]*?>[\s\S]*?</in_text_reference>', ' ', cleaned_content, flags=re.DOTALL | re.IGNORECASE)
 
     # Ensure <original=...> keeps only the correct word
-    cleaned_content = re.sub(r'<original=[^>]*?>(.*?)</original>', r'\1', cleaned_content)
+    cleaned_content = re.sub(r'<original=[^>]*?>(.*?)</original>', r' \1 ', cleaned_content)
 
     # Extract and keep <title> content
     title_content = re.findall(r'<title>(.*?)</title>', cleaned_content, re.DOTALL)
     if title_content:
         cleaned_content += ' ' + ' '.join(title_content)  # Append titles to the text
 
+    # Remove all remaining XML tags
+    cleaned_content = re.sub(r'<[^>]*?>', ' ', cleaned_content)
+
+    # Clean up multiple spaces again
+    cleaned_content = re.sub(r'\s+', ' ', cleaned_content).strip()
+
     # Debugging: Check after reference removal
-    print("Text After Removing References:", cleaned_content[:1000])
+    print("Text After Processing:", cleaned_content[:1000])
 
     # Convert text to lowercase for uniformity
     cleaned_content = cleaned_content.lower()
 
-    # Tokenize words
-    words = re.findall(r"\b\w+(?:[-']\w+)*\b", cleaned_content)
+    # First, replace periods that might be connecting words
+    # This handles cases like "a.foreign" by inserting spaces
+    cleaned_content = re.sub(r'(\w+)\.(\w+)', r'\1 \2', cleaned_content)
+
+    # Handle other common punctuation that might join words
+    cleaned_content = re.sub(r'(\w+)[,:;](\w+)', r'\1 \2', cleaned_content)
+
+    # Handle dash-connected words that should be separated
+    cleaned_content = re.sub(r'(\w+)-(\w+)', r'\1 \2', cleaned_content)
+
+    raw_words = word_tokenize(cleaned_content)
+
+    words = []
+    for word in raw_words:
+
+        clean_word = word.strip('.,;:!?()[]{}"\'`')
+
+
+        if any(p in clean_word for p in '.,;:!?()[]{}"\'/\\'):
+            subwords = re.findall(r'\b[a-zA-Z]+\b', clean_word)
+            words.extend([w for w in subwords if len(w) > 1])
+        elif clean_word.isalpha() and len(clean_word) > 1:
+            words.append(clean_word)
 
     # Remove unnecessary words (e.g., extracted tags)
     words = [word for word in words if word not in ['reference_list', 'references_list']]
