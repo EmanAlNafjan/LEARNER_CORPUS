@@ -1,7 +1,7 @@
 import pandas as pd
 import re
 import nltk
-nltk.download('punkt')
+nltk.download('all')
 from nltk.tokenize import word_tokenize
 from collections import Counter
 import streamlit as st
