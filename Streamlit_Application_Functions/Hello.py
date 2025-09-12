@@ -33,9 +33,9 @@ Use the tools provided to explore the corpus:
 	\n\n•	Concordancer: search words and collocations in context
 	\n\n•	Frequency Lists: compare vocabulary use across terms and tasks
 	\n\n•	Spelling Errors: discover common error patterns
-\n\n####👈 Select how you would like to search the corpus from the sidebar
-Built on FAIR data principles, the corpus supports research on language development, academic writing, and the role of new technologies in education.
+\n\n👈 Select how you would like to search the corpus from the sidebar
+\n\n Built on FAIR data principles, the corpus supports research on language development, academic writing, and the role of new technologies in education.
 
-###Contact: ksauhslearnercorpus@gmail.com
+Contact: ksauhslearnercorpus@gmail.com
 """
 )
