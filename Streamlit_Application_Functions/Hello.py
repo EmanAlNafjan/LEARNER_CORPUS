@@ -27,7 +27,15 @@ st.markdown(
 st.markdown(
 """
 👈 Select how you would like to search the corpus from the sidebar
-### Want to learn more?
-- Check out our paper at https://assets-eu.researchsquare.com/files/rs-4755662/v1/f425c3c0-48fd-4433-be7d-6c10a83d11b3.pdf?c=1725076036
+### The KSAUHS Learner Corpus contains over 800,000 words from 157 students tracked across four trimesters. It is the first longitudinal collection of English academic writing by Arabic L1 learners in Saudi Arabia.
+
+Use the tools provided to explore the corpus:
+	•	Concordancer: search words and collocations in context
+	•	Frequency Lists: compare vocabulary use across terms and tasks
+	•	Spelling Errors: discover common error patterns
+
+Built on FAIR data principles, the corpus supports research on language development, academic writing, and the role of new technologies in education.
+
+Contact: ksauhslearnercorpus@gmail.com
 """
 )
